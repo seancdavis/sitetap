@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Sitetap::VERSION
   spec.authors       = ["Sean C Davis"]
   spec.email         = ["scdavis41@gmail.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = %q{Scrape content from a website.}
+  spec.description   = %q{}
   spec.homepage      = ""
   spec.license       = "MIT"
 
