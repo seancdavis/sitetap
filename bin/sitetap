@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+
+require 'sitetap/scraper'
+
+url = ARGV[0]
+
+if url.nil? || url == ''
+  puts "Usage: sitetap [URL]"
+  exit
+else
+  Sitetap::Scraper.scrape!(url)
+end
