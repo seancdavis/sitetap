@@ -1,10 +1,16 @@
-# Sitetap
+SiteTap
+==========
 
-TODO: Write a gem description
+SiteTap takes a home page URL and turns into into a packaged directory of:
 
-## Installation
+* html
+* plain text
+* markdown
 
-Add this line to your application's Gemfile:
+Installation
+----------
+
+To install this to a ruby project, add the following to your `Gemfile`:
 
 ```ruby
 gem 'sitetap'
@@ -12,17 +18,56 @@ gem 'sitetap'
 
 And then execute:
 
-    $ bundle
+```text
+$ bundle install
+```
 
-Or install it yourself as:
+Or install it so you can run it globally:
 
-    $ gem install sitetap
+```text
+$ gem install sitetap
+```
 
-## Usage
+Usage
+----------
 
-TODO: Write usage instructions here
+Using SiteTap is quite simple. You just run the executable and give it a URL.
 
-## Contributing
+```text
+$ sitetap [URL]
+```
+
+So, if I wanted to scrape Sapwood's website, I could do this:
+
+```text
+$ sitetap "http://sapwood.org/"
+```
+
+Within your current directory, this will create the following directory
+structure:
+
+```text
+- sapwood.org
+    - html
+    - markdown
+    - txt
+    - tmp
+```
+
+Within each are the converted files from the website.
+
+Bugs
+----------
+
+Please [create an issue](https://github.com/seancdavis/sitetap/issues/new) if
+you encounter a bug.
+
+Contributing
+----------
+
+Missing a feature? Add it!
+
+Found a bug? Fix it!
 
 1. Fork it ( https://github.com/[my-github-username]/sitetap/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
