@@ -8,14 +8,40 @@ module Sitetap
     end
 
     def self.scrape!(url)
-      Sitetap::Scraper.new(url).scrape!
+      scraper = Sitetap::Scraper.new(url)
+      scraper.scrape!
+      scraper
     end
 
     def scrape!
+      verify_dir
       wget
+      self
+    end
+
+    def dir
+      root
     end
 
     private
+
+      def domain
+        @domain ||= @url.gsub(/http(s)?\:\/\//, '')
+      end
+
+      def root
+        @root ||= "#{Dir.pwd}/#{domain}"
+      end
+
+      def html_dir
+        "#{root}/html"
+      end
+
+      def verify_dir
+        unless Dir.exists?(html_dir)
+          FileUtils.mkdir_p(html_dir)
+        end
+      end
 
       def wget_options
         [
@@ -28,12 +54,8 @@ module Sitetap
         ]
       end
 
-      def domain
-        @domain ||= @url.gsub(/http(s)?\:\/\//, '')
-      end
-
       def wget
-        system("wget #{wget_options.join(' ')} --domains #{domain} #{@url}")
+        system("cd #{html_dir}; wget #{wget_options.join(' ')} --domains #{domain} #{@url}; cd ../../")
         # add `-o #{log_dir}/scrape.log` to store logfile
       end
 
