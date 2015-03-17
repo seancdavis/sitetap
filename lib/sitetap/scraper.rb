@@ -50,7 +50,8 @@ module Sitetap
           '--html-extension',
           '--convert-links',
           '--restrict-file-names=windows',
-          '--span-hosts'
+          '--span-hosts',
+          '-e robots=off'
         ]
       end
 
