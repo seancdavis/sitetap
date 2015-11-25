@@ -1,6 +1,7 @@
 require 'nokogiri'
 require 'reverse_markdown'
 require 'fileutils'
+require 'sanitize'
 
 module Sitetap
   class Parser
@@ -9,12 +10,13 @@ module Sitetap
       @root = root_dir
     end
 
-    def self.parse!(root_dir)
-      parser = Sitetap::Parser.new(root_dir).parse!
+    def self.parse!(root_dir, selector = nil)
+      parser = Sitetap::Parser.new(root_dir).parse!(selector)
       parser
     end
 
-    def parse!
+    def parse!(selector = nil)
+      @selector = selector unless selector.nil?
       verify_directories
       do_the_loop
       self
@@ -78,24 +80,24 @@ module Sitetap
 
         # get the path of the file relative to the html
         # directory (scraped dir)
-        # 
+        #
         file_path = file.gsub(/#{html_dir}\//, '')
 
         # clean the contents of the html file so we can work
         # with it
-        # 
+        #
         contents = clean_html(file)
 
         # set the references to where the new files will
         # live
-        # 
+        #
         tmp_file_path       = "#{tmp_dir}/#{file_path}"
         markdown_file_path  = "#{md_dir}/#{file_path}.md"
         text_file_path      = "#{txt_dir}/#{file_path}.txt"
 
         # find or create directories that will contain the
         # file
-        # 
+        #
         verify_file_directories([
           tmp_file_path,
           markdown_file_path,
@@ -104,22 +106,22 @@ module Sitetap
 
         # write a temporary html file with the cleaned-up
         # contents
-        # 
+        #
         write_file(tmp_file_path, contents)
 
         # now we hone in on the html contents and strip the
         # stuff we don't need
-        # 
+        #
         adj_contents = filter_html(tmp_file_path)
 
         # convert the adjusted html to markdown and write it
         # to file
-        # 
+        #
         write_file(markdown_file_path, html2markdown(adj_contents))
 
         # last, we remove all the tags and write the plain
         # text file
-        # 
+        #
         write_file(text_file_path, strip_tags(adj_contents))
 
       end
@@ -145,23 +147,22 @@ module Sitetap
     end
 
     def filter_html(file_path)
-      contents = File.read(file_path, :encoding => 'ASCII')
+      contents = File.read(file_path, :encoding => 'UTF-8')
       page = Nokogiri::HTML(contents)
       content = page.css(selector).to_s
-      # content = page.css('body').to_s if content == ''
     end
 
     def strip_tags(html)
-      html = html.gsub(/(<[^>]*>)|\n|\t/s, ' ')
-      html.gsub(/(\ \ )+/, "\n\n")
+      html = Sanitize.fragment(html)
+      html.gsub(/\n(\ )+/, "\n").gsub(/\ \ +/, "\n\n").gsub(/\n\n\n+/, "\n\n")
     end
 
     def html2markdown(html)
       ReverseMarkdown.convert(
-        html, 
-        :unknown_tags => :bypass, 
+        html,
+        :unknown_tags => :bypass,
         :github_flavored => true
-      )
+      ).gsub(/\n(\ )+/, "\n").gsub(/\n\n\n+/, "\n\n")
     end
 
     # ------------------------------------ Writing Files

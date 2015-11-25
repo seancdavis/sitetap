@@ -3,12 +3,13 @@
 require 'sitetap/scraper'
 require 'sitetap/parser'
 
-url = ARGV[0]
+url       = ARGV[0]
+selector  = ARGV[1]
 
 if url.nil? || url == ''
   puts "Usage: sitetap [URL]"
   exit
 else
   scraper = Sitetap::Scraper.scrape!(url)
-  parser = Sitetap::Parser.parse!(scraper.dir)
+  parser = Sitetap::Parser.parse!(scraper.dir, selector)
 end
